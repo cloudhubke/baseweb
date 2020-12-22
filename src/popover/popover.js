@@ -17,6 +17,7 @@ import {
   TRIGGER_TYPE,
   ANIMATE_OUT_TIME,
   ANIMATE_IN_TIME,
+  POPOVER_MARGIN,
 } from './constants.js';
 import {Layer, TetherBehavior} from '../layer/index.js';
 import {
@@ -76,6 +77,17 @@ class Popover extends React.Component<PopoverPropsT, PopoverPrivateStateT> {
       this.popperRef.current.getBoundingClientRect().top > 0
     ) {
       this.setState({autoFocusAfterPositioning: true});
+    }
+
+    if (__DEV__) {
+      if (!this.anchorRef.current) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[baseui][Popover] ref has not been passed to the Popper's anchor element.
+              See how to pass the ref to an anchor element in the Popover example
+              http://baseui.design/components/popover#anchor-ref-handling-example`,
+        );
+      }
     }
   }
 
@@ -331,7 +343,7 @@ class Popover extends React.Component<PopoverPropsT, PopoverPrivateStateT> {
   }
 
   getSharedProps(): $Diff<SharedStylePropsArgT, {children?: React.Node}> {
-    const {isOpen, showArrow} = this.props;
+    const {isOpen, showArrow, popoverMargin = POPOVER_MARGIN} = this.props;
     const {isAnimating, arrowOffset, popoverOffset, placement} = this.state;
     return {
       $showArrow: !!showArrow,
@@ -340,6 +352,7 @@ class Popover extends React.Component<PopoverPropsT, PopoverPrivateStateT> {
       $placement: placement,
       $isAnimating: isAnimating,
       $isOpen: isOpen,
+      $popoverMargin: popoverMargin,
     };
   }
 

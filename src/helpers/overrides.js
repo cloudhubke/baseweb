@@ -107,7 +107,7 @@ export function getOverrides(
     typeof override === 'object' &&
     typeof override.props === 'function'
   ) {
-    // TODO(v10)
+    // TODO(v11)
     if (__DEV__) {
       console.warn(
         'baseui:Overrides Props as a function will be removed in the next major version.',
@@ -191,4 +191,26 @@ export function mergeConfigurationOverrides(
       typeof source === 'function' ? source(...args) : source,
     );
   };
+}
+
+// Lil' hook for memoized unpacking of overrides
+export function useOverrides(
+  defaults: {
+    // eslint-disable-next-line flowtype/no-weak-types
+    [string]: React.ComponentType<any>,
+  },
+  overrides?: OverridesT = {},
+) {
+  return React.useMemo(
+    () =>
+      // eslint-disable-next-line flowtype/no-weak-types
+      Object.keys(defaults).reduce<{[string]: [React.ComponentType<any>, {}]}>(
+        (obj, key) => {
+          obj[key] = getOverrides(overrides[key], defaults[key]);
+          return obj;
+        },
+        {},
+      ),
+    [overrides],
+  );
 }

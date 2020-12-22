@@ -37,8 +37,10 @@ export const StyledContent = styled<StyledContentPropsT>(
       flexGrow: 1,
       height: $sublist ? '48px' : '72px',
       justifyContent: 'space-between',
-      paddingRight: $theme.sizing.scale600,
       marginLeft: $mLeft ? $theme.sizing.scale600 : null,
+      ...($theme.direction === 'rtl'
+        ? {paddingLeft: $theme.sizing.scale600}
+        : {paddingRight: $theme.sizing.scale600}),
     };
   },
 );
@@ -73,3 +75,28 @@ export const StyledArtworkContainer = styled<StyledArtworkContainerPropsT>(
     };
   },
 );
+
+export const StyledLabelContent = styled<{||}>('p', ({$theme}) => {
+  return {
+    ...$theme.typography.LabelMedium,
+    color: $theme.colors.contentPrimary,
+    marginTop: 0,
+    marginBottom: 0,
+  };
+});
+
+export const StyledLabelDescription = styled<{||}>('p', ({$theme}) => {
+  return {
+    ...$theme.typography.ParagraphSmall,
+    color: $theme.colors.contentPrimary,
+    marginTop: 0,
+    marginBottom: 0,
+  };
+});
+
+export const StyledLabelSublistContent = styled<{||}>('p', ({$theme}) => {
+  return {
+    ...$theme.typography.ParagraphMedium,
+    color: $theme.colors.contentPrimary,
+  };
+});

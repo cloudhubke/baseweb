@@ -136,6 +136,7 @@ export interface DatepickerOverrides<T> {
   Week?: Override<T>;
   Day?: Override<T>;
   Input?: Override<T>;
+  InputWrapper?: Override<T>;
   Popover?: Override<T>;
 }
 export type DatepickerProps = CalendarProps & {
@@ -149,6 +150,7 @@ export type DatepickerProps = CalendarProps & {
   positive?: boolean;
   placeholder?: string;
   required?: boolean;
+  displayValueAtRangeIndex?: number;
   formatDisplayValue?: (date: Date | Date[], formatString: string) => string;
   formatString?: string;
   mask?: string | null;

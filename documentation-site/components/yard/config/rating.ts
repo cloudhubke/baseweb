@@ -28,12 +28,21 @@ const ratingConfig: TConfig = {
         into: 'value',
       },
     },
-
+    size: {
+      value: '22',
+      type: PropTypes.Number,
+      description: 'The size of rating icons.',
+    },
     value: {
       value: 4,
       type: PropTypes.Number,
       description: 'The current rating value.',
       stateful: true,
+    },
+    readOnly: {
+      value: false,
+      type: PropTypes.Boolean,
+      description: 'Whether the rating is read-only or editable.',
     },
     overrides: {
       value: undefined,

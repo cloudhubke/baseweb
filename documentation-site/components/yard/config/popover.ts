@@ -89,6 +89,12 @@ const PopoverConfig: TConfig = {
       description:
         'If true, an arrow will be shown pointing from the popover to the trigger element.',
     },
+    popoverMargin: {
+      value: 8,
+      defaultValue: 8,
+      type: PropTypes.Number,
+      description: 'Margin of the popover.',
+    },
     focusLock: {
       value: false,
       type: PropTypes.Boolean,
@@ -148,7 +154,7 @@ const PopoverConfig: TConfig = {
       placeholder: '200',
       type: PropTypes.Number,
       description:
-        'Number of milliseconds to wait before showing the popover after mouse leaves the trigger element.',
+        'Number of milliseconds to wait before hiding the popover after mouse leaves the trigger element.',
       hidden: true,
     },
     ignoreBoundary: {
@@ -160,8 +166,9 @@ const PopoverConfig: TConfig = {
     },
     mountNode: {
       value: undefined,
-      type: PropTypes.String,
-      description: 'Defines where to mount the popover.',
+      type: PropTypes.Object,
+      description:
+        'Defines where to mount the popover. It accepts an HTMLElement.',
       hidden: true,
     },
     popperOptions: {

@@ -29,8 +29,9 @@ function Example() {
     <div className={css({width: '375px', padding: '12px 48px'})}>
       <FormControl label="label" caption="caption">
         <Combobox
+          id="combo"
           value={value}
-          onChange={setValue}
+          onChange={nextValue => setValue(nextValue)}
           mapOptionToString={o => o.label}
           options={options}
         />
@@ -38,7 +39,7 @@ function Example() {
       <FormControl label="label" caption="caption" positive="positive message">
         <Combobox
           value={value}
-          onChange={setValue}
+          onChange={nextValue => setValue(nextValue)}
           mapOptionToString={o => o.label}
           options={options}
         />
@@ -46,7 +47,7 @@ function Example() {
       <FormControl label="label" caption="caption" error="error message">
         <Combobox
           value={value}
-          onChange={setValue}
+          onChange={nextValue => setValue(nextValue)}
           mapOptionToString={o => o.label}
           options={options}
         />

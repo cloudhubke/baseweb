@@ -24,10 +24,12 @@ export interface SHAPE {
   default: 'default';
   pill: 'pill';
   round: 'round';
+  circle: 'circle';
   square: 'square';
 }
 
 export interface ButtonOverrides {
+  Root?: Override<any>;
   BaseButton?: Override<any>;
   StartEnhancer?: Override<any>;
   EndEnhancer?: Override<any>;

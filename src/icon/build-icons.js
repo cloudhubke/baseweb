@@ -31,6 +31,11 @@ function titleCase(str) {
     .join(' ');
 }
 
+// handle the exception from Chevrons, where we do not want the word Chevron in the title
+function removeChevronFromTitle(str) {
+  return str.replace('Chevron ', '');
+}
+
 // transform svg string to properly styled jsx
 function reactify(svgString) {
   return svgString
@@ -84,29 +89,21 @@ async function generateNewIcons() {
       'utf8',
     );
 
-    const title = titleCase(svgFile);
+    const title = removeChevronFromTitle(titleCase(svgFile));
     const viewboxRegex = svgFileContents.match(/viewBox="([^"]+)"/);
     let viewBox = null;
     if (viewboxRegex && viewboxRegex[1]) {
       viewBox = viewboxRegex[1];
     }
 
-    const props = [{key: 'title', value: title}];
-    if (viewboxRegex && viewboxRegex[1]) {
-      props.push({key: 'viewBox', value: viewBox});
-    }
-
     let result = iconTemplate
+      .replace('%%ICON_PATH%%', reactify(svgFileContents))
       .replace(new RegExp('%%ICON_NAME%%', 'g'), componentName)
+      .replace(new RegExp('%%SVG_TITLE%%', 'g'), title)
       .replace(
-        new RegExp('%%ICON_OBJ_PROPS%%', 'g'),
-        props.map(p => `${p.key}: '${p.value}',`).join(''),
-      )
-      .replace(
-        new RegExp('%%ICON_JSX_PROPS%%', 'g'),
-        props.map(p => `${p.key}="${p.value}"`).join(' '),
-      )
-      .replace('%%ICON_PATH%%', reactify(svgFileContents));
+        new RegExp('%%SVG_VIEWBOX%%', 'g'),
+        viewBox && viewboxRegex[1] ? `viewBox="${viewBox}"` : '',
+      );
 
     fs.writeFileSync(
       path.resolve(__dirname, `./${svgFile}.js`),

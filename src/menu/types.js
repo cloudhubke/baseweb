@@ -122,6 +122,10 @@ export type StatefulContainerPropsT = {
   onItemSelect: OnItemSelectFnT,
   /** Ref for the menu container element. Used to capture key events for navigation */
   rootRef?: RootRefT,
+  /** Node for menu's keyboard listener. Default is null and keyboard handlers will listen on menu root. */
+  keyboardControlNode: React$ElementRef<*>,
+  /** whether has keyboard type-ahead function */
+  typeAhead: boolean,
   /** Child as function pattern. */
   children: RenderPropsT => React.Node,
   addMenuToNesting?: (ref: {current: HTMLElement | null}) => void,
@@ -163,6 +167,7 @@ export type SharedStatelessPropsT = {
    * bindings to work properly. Every rendered item should call this.
    */
   getRequiredItemProps?: GetRequiredItemPropsFnT,
+  isFocused?: boolean,
   handleMouseLeave?: () => mixed,
   /** Index of highlighted menu item. */
   highlightedIndex?: number,
@@ -176,6 +181,7 @@ export type SharedStatelessPropsT = {
   rootRef?: RootRefT,
   focusMenu?: (event: FocusEvent | MouseEvent | KeyboardEvent) => mixed,
   unfocusMenu?: () => mixed,
+  handleKeyDown?: (event: KeyboardEvent) => mixed,
 };
 
 export type StatefulMenuPropsT = {
@@ -196,6 +202,8 @@ export type StatefulMenuPropsT = {
   rootRef?: RootRefT,
   /** Child as function pattern. */
   children?: RenderPropsT => React.Node,
+  /** whether has keyboard type-ahead function */
+  typeAhead?: boolean,
   addMenuToNesting?: (ref: {current: HTMLElement | null}) => void,
   removeMenuFromNesting?: (ref: {current: HTMLElement | null}) => void,
   getParentMenu?: (ref: {current: HTMLElement | null}) => ?{
@@ -269,3 +277,12 @@ export type OptionProfilePropsT = {
   /** Renders all menu content for SEO purposes regardless of menu  state */
   renderAll?: boolean,
 };
+
+export type NestedMenuRefT = {current: HTMLElement | null};
+export type NestedMenuContextT = {|
+  addMenuToNesting: (ref: NestedMenuRefT) => void,
+  removeMenuFromNesting: (ref: NestedMenuRefT) => void,
+  getParentMenu: (ref: NestedMenuRefT) => ?NestedMenuRefT,
+  getChildMenu: (ref: NestedMenuRefT) => ?NestedMenuRefT,
+  mountRef: NestedMenuRefT,
+|};

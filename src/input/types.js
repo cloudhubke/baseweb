@@ -57,6 +57,8 @@ export type SharedPropsT = {|
   /** Renders UI in 'required' state */
   $required: boolean,
   $position: $Keys<typeof ENHANCER_POSITION>,
+  /** Defines if has a clearable or MaskToggleButton at the end */
+  $hasIconTrailing: boolean,
 |};
 
 export type PropsT = *;
@@ -122,6 +124,9 @@ export type BaseInputPropsT<T> = {|
   onFocus: (e: SyntheticFocusEvent<T>) => mixed,
   /** If true, adds a clear value icon button to the end of the input container. */
   clearable?: boolean,
+  /** If undefined or true, clears the input when the Escape button is pressed with the input focused. True by default. */
+  clearOnEscape?: boolean,
+  maxLength?: number,
   onClear?: (e: SyntheticEvent<T>) => mixed,
   overrides: BaseInputComponentsT,
   placeholder?: string,
@@ -138,6 +143,8 @@ export type BaseInputPropsT<T> = {|
   min?: number,
   /** max value when used as input type=number */
   max?: number,
+  /** step value when used as input type=number */
+  step?: number,
 |};
 
 export type InputPropsT = {|

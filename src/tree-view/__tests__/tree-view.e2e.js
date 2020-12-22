@@ -46,11 +46,25 @@ describe('tree view', () => {
     const checkbox = '[data-baseweb="checkbox"]';
     const checkboxInput = '[data-baseweb="checkbox"] input';
     await mount(page, 'tree-view-interactable');
-    await page.waitFor(checkbox);
+    await page.waitForSelector(checkbox);
     let isChecked = await page.$eval(checkboxInput, i => i.checked);
     expect(isChecked).toBe(false);
     await page.click(checkbox);
     isChecked = await page.$eval(checkboxInput, i => i.checked);
     expect(isChecked).toBe(true);
+  });
+
+  it('type-ahead works normal', async () => {
+    await mount(page, 'tree-view');
+    await page.mouse.click(50, 20);
+    await page.mouse.click(50, 20);
+    await page.keyboard.press('g');
+    const highlightedSelector = '[tabindex="0"]';
+    const highlightedItem = await page.$(highlightedSelector);
+    const text = await page.evaluate(
+      item => (item ? item.textContent : 'NOT_FOUND'),
+      highlightedItem,
+    );
+    expect(text).toBe('BlankGrandchild 1');
   });
 });

@@ -2,6 +2,7 @@ import {Breadcrumbs} from 'baseui/breadcrumbs';
 import {StyledLink} from 'baseui/link';
 import {PropTypes} from 'react-view';
 import {TConfig} from '../types';
+import iconConfig from './icon';
 
 const breadcrumbsProps = require('!!extract-react-types-loader!../../../../src/breadcrumbs/breadcrumbs.js');
 
@@ -35,12 +36,24 @@ const BreadcrumbsConfig: TConfig = {
       description: 'Elements separated by divider',
       type: PropTypes.String,
     },
+    showTrailingSeparator: {
+      value: false,
+      type: PropTypes.Boolean,
+      description:
+        'Whether to show a trailing separator after the last breadcrumb.',
+    },
     overrides: {
       value: undefined,
       type: PropTypes.Custom,
       description: 'Lets you customize all aspects of the component.',
       custom: {
-        names: ['Root', 'Separator', 'List', 'ListItem', 'Icon'],
+        names: [
+          'Root',
+          'Separator',
+          'List',
+          'ListItem',
+          {...iconConfig, componentName: 'Icon'},
+        ],
         sharedProps: {},
       },
     },

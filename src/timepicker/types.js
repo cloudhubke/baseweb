@@ -11,12 +11,12 @@ import type {OptionT} from '../select/index.js';
 import type {SizeT} from '../input/types.js';
 import type {DateIOAdapter} from '../datepicker/utils/types.js';
 
-export type TimePickerPropsT<T> = {
+export type TimePickerPropsT<T = Date> = {
   /** Render options in AM/PM format or 24 hour format. Defaults to 12 hour. */
   adapter: DateIOAdapter<T>,
   format?: '12' | '24',
   /** Callback for when time selection changes. */
-  onChange?: T => mixed,
+  onChange?: (T | null) => mixed,
   overrides?: {
     Select?: OverrideT,
   },

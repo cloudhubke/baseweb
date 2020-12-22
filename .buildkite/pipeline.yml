@@ -8,6 +8,7 @@ steps:
         env: DOCKER_BUILDKIT=1
     agents:
       queue: builders
+
   - name: ':docker: :package: e2e'
     plugins:
       'docker-compose#v3.0.3':
@@ -19,9 +20,11 @@ steps:
         env: DOCKER_BUILDKIT=1
     agents:
       queue: builders
+
   # Wait until all images are built.
   # This way we can download the built image from a registry instead of building each for each test task.
   - wait
+
   # All of the commands after the wait are run in parallel.
   - name: validate-examples
     command: yarn validate:examples
@@ -48,7 +51,7 @@ steps:
       queue: workers
 
   - name: ':flowtype:'
-    command: yarn flow check
+    command: yarn flow
     plugins:
       'docker-compose#v3.0.3':
         run: baseui
@@ -63,6 +66,14 @@ steps:
     agents:
       queue: workers
 
+  - name: ':react: react@17 unit-test'
+    command: yarn upgrade react@^17.0.1 react-dom@^17.0.1 && yarn unit-test
+    plugins:
+      'docker-compose#v3.0.3':
+        run: baseui
+    agents:
+      queue: workers
+
   - name: fossa
     command: 'curl https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash && fossa'
     plugins:
@@ -71,9 +82,18 @@ steps:
     agents:
       queue: workers
 
-  - name: deploy-npm
-    command: './deploy-npm.sh'
+  - name: deploy-npm-latest
+    command: 'node scripts/publish-stable-release.js'
     if: build.branch == "master" && build.message =~ /^Release v[0-9]+\.[0-9]+\.[0-9]+/
+    plugins:
+      'docker-compose#v3.0.3':
+        run: baseui
+    agents:
+      queue: workers
+
+  - name: alpha-test-web-code
+    command: 'node scripts/alpha-test-web-code.js'
+    if: build.branch != "master" && build.message =~ /^Release v[0-9]+\.[0-9]+\.[0-9]+/
     plugins:
       'docker-compose#v3.0.3':
         run: baseui
@@ -130,8 +150,10 @@ steps:
     agents:
       queue: workers
 
-  - name: vrt
-    command: yarn vrt:ci
+  - name: ':react: react@17 e2e'
+    # we have to install puppeteer here to trigger the install.js script
+    # and also to make sure we do not add this to the released build artifact
+    command: yarn add puppeteer && yarn upgrade react@^17.0.1 react-dom@^17.0.1 && yarn e2e:test:ci
     artifact_paths:
       - '__artifacts__/*.png'
     plugins:
@@ -143,10 +165,15 @@ steps:
     agents:
       queue: workers
 
-  - name: flow-check-build
-    command: ./scripts/flow-check-build.js
+  - name: vrt
+    command: yarn vrt:ci
+    artifact_paths:
+      - '__artifacts__/*.png'
     plugins:
       'docker-compose#v3.0.3':
-        run: baseui
+        run: e2e-test
+        pull:
+          - e2e-server
+          - e2e-server-healthy
     agents:
       queue: workers

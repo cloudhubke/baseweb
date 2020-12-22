@@ -1,4 +1,4 @@
-import {ProgressBar} from 'baseui/progress-bar';
+import {ProgressBar, SIZE} from 'baseui/progress-bar';
 import {PropTypes} from 'react-view';
 import {TConfig} from '../types';
 
@@ -11,6 +11,7 @@ const ProgressBarConfig: TConfig = {
   },
   scope: {
     ProgressBar,
+    SIZE,
   },
   theme: ['progressbarTrackFill'],
   props: {
@@ -18,7 +19,7 @@ const ProgressBarConfig: TConfig = {
       value: 10,
       type: PropTypes.Number,
       description:
-        'Progess bar value attribute normalized in the 0 to 100 range.',
+        'Progress bar value attribute normalized in the 0 to 100 range.',
       stateful: true,
     },
     getProgressLabel: {
@@ -40,10 +41,28 @@ const ProgressBarConfig: TConfig = {
       type: PropTypes.Boolean,
       description: 'Can be used to show the infinite progress bar.',
     },
+    size: {
+      value: 'SIZE.medium',
+      defaultValue: 'SIZE.medium',
+      options: SIZE,
+      type: PropTypes.Enum,
+      description: 'Renders component in provided size.',
+      imports: {
+        'baseui/progress-bar': {
+          named: ['SIZE'],
+        },
+      },
+    },
+    steps: {
+      value: undefined,
+      type: PropTypes.Number,
+      description:
+        'Defines how many steps the progress bar has. Defaults to 1.',
+    },
     successValue: {
       value: 100,
       type: PropTypes.Number,
-      description: 'A custom completion value. Will be removed in v10.',
+      description: 'A custom completion value. Will be removed in v11.',
       hidden: true,
     },
     errorMessage: {
@@ -56,7 +75,7 @@ const ProgressBarConfig: TConfig = {
       type: PropTypes.Custom,
       description: 'Lets you customize all aspects of the component.',
       custom: {
-        names: ['Bar', 'BarProgress', 'Label', 'Root'],
+        names: ['Bar', 'BarProgress', 'BarContainer', 'Label', 'Root'],
         sharedProps: {
           $successValue: 'successValue',
           $value: 'value',

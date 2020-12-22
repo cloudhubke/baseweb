@@ -20,16 +20,20 @@ export type StarRatingPropsT = {
   value?: number,
   /** The total number of items to display. */
   numItems: number,
+  readOnly?: boolean,
   /** Callback that's called with the newly selected value. */
   onChange?: ({value: number}) => mixed,
+  size?: number,
 };
 
 export type EmoticonRatingPropsT = {
   overrides?: RatingOverridesT,
   /** The current rating value. */
   value?: number,
+  readOnly?: boolean,
   /** Callback that's called with the newly selected value. */
   onChange?: ({value: number}) => mixed,
+  size?: number,
 };
 
 export type RatingStateT = {
@@ -46,5 +50,7 @@ export type StyledRatingItemPropsT = {
   $isActive: boolean,
   $isSelected: boolean,
   $isFocusVisible: boolean,
+  $isReadOnly: boolean,
   $index: number,
+  $size: number,
 };

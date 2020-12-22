@@ -3,12 +3,13 @@ import {StyledFn, StyletronComponent} from 'styletron-react';
 import {SHAPE, SIZE, KIND} from '../button';
 import {Override} from '../overrides';
 
-export {SIZE};
+export {SHAPE, SIZE};
 
 export interface MODE {
   checkbox: 'checkbox';
   radio: 'radio';
 }
+
 export interface STATE_CHANGE_TYPE {
   change: 'change';
 }

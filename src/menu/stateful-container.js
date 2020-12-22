@@ -30,11 +30,12 @@ export default class MenuStatefulContainer extends React.Component<
       highlightedIndex: -1,
       isFocused: false,
     },
+    typeAhead: true,
+    keyboardControlNode: {current: null},
     stateReducer: ((changeType, changes) => changes: StateReducerFnT),
     onItemSelect: () => {},
     getRequiredItemProps: () => ({}),
     children: () => null,
-
     // from nested-menus context
     addMenuToNesting: () => {},
     removeMenuFromNesting: () => {},
@@ -50,7 +51,7 @@ export default class MenuStatefulContainer extends React.Component<
   // We need to have access to the root component user renders
   // to correctly facilitate keyboard scrolling behavior
   rootRef = (React.createRef(): {current: HTMLElement | null});
-
+  keyboardControlNode = this.props.keyboardControlNode.current;
   getItems() {
     if (Array.isArray(this.props.items)) {
       return this.props.items;
@@ -80,7 +81,9 @@ export default class MenuStatefulContainer extends React.Component<
       }
 
       if (this.state.isFocused) {
-        document.addEventListener('keydown', this.onKeyDown);
+        if (this.keyboardControlNode) {
+          this.keyboardControlNode.addEventListener('keydown', this.onKeyDown);
+        }
       }
     }
     this.props.addMenuToNesting && this.props.addMenuToNesting(rootRef);
@@ -90,7 +93,8 @@ export default class MenuStatefulContainer extends React.Component<
     const rootRef = this.props.rootRef ? this.props.rootRef : this.rootRef;
 
     if (__BROWSER__) {
-      document.removeEventListener('keydown', this.onKeyDown);
+      if (this.keyboardControlNode)
+        this.keyboardControlNode.removeEventListener('keydown', this.onKeyDown);
     }
     this.props.removeMenuFromNesting &&
       this.props.removeMenuFromNesting(rootRef);
@@ -99,10 +103,25 @@ export default class MenuStatefulContainer extends React.Component<
   componentDidUpdate(_: mixed, prevState: StatefulContainerStateT) {
     if (__BROWSER__) {
       if (!prevState.isFocused && this.state.isFocused) {
-        document.addEventListener('keydown', this.onKeyDown);
+        if (this.keyboardControlNode)
+          this.keyboardControlNode.addEventListener('keydown', this.onKeyDown);
       } else if (prevState.isFocused && !this.state.isFocused) {
-        document.removeEventListener('keydown', this.onKeyDown);
+        if (this.keyboardControlNode)
+          this.keyboardControlNode.removeEventListener(
+            'keydown',
+            this.onKeyDown,
+          );
       }
+    }
+    var range = this.getItems().length;
+    if (range === 0 && this.state.highlightedIndex !== -1) {
+      this.internalSetState(STATE_CHANGE_TYPES.enter, {
+        highlightedIndex: -1,
+      });
+    } else if (this.state.highlightedIndex >= range) {
+      this.internalSetState(STATE_CHANGE_TYPES.enter, {
+        highlightedIndex: 0,
+      });
     }
   }
 
@@ -110,8 +129,13 @@ export default class MenuStatefulContainer extends React.Component<
   refList: Array<React$ElementRef<*>> = [];
   // list of ids applied to list items. used to set aria-activedescendant
   optionIds: string[] = [];
+  //characters input from keyboard, will automatically be clear after some time
+  typeAheadChars: string = '';
+  //count time for each continous keyboard input
+  typeAheadTimeOut: * = null;
 
   // Internal set state function that will also invoke stateReducer
+
   internalSetState(
     changeType: $Keys<typeof STATE_CHANGE_TYPES>,
     changes: $Shape<StatefulContainerStateT>,
@@ -149,6 +173,65 @@ export default class MenuStatefulContainer extends React.Component<
         }
         this.handleEnterKey(event);
         break;
+      default:
+        if (this.props.typeAhead) {
+          clearTimeout(this.typeAheadTimeOut);
+          this.handleAlphaDown(event);
+        }
+        break;
+    }
+  };
+  handleAlphaDown = (event: KeyboardEvent) => {
+    const rootRef = this.props.rootRef ? this.props.rootRef : this.rootRef;
+    const prevIndex = this.state.highlightedIndex;
+
+    this.typeAheadChars += event.key;
+    this.typeAheadTimeOut = setTimeout(() => {
+      this.typeAheadChars = '';
+    }, 500);
+
+    var nextIndex = prevIndex;
+    event.preventDefault();
+    var list = this.getItems();
+    if (list.length === 0 || !('label' in list[0])) return;
+
+    var notMatch = true;
+    for (let n = 0; n < list.length; n++) {
+      let label = list[n].label;
+      if (
+        label &&
+        label.toUpperCase().indexOf(this.typeAheadChars.toUpperCase()) === 0
+      ) {
+        nextIndex = n;
+        notMatch = false;
+        break;
+      }
+    }
+
+    if (notMatch) {
+      for (let n = 0; n < list.length; n++) {
+        let label = list[n].label;
+        if (
+          label &&
+          label.toUpperCase().indexOf(this.typeAheadChars.toUpperCase()) > 0
+        ) {
+          nextIndex = n;
+          break;
+        }
+      }
+    }
+    this.internalSetState(STATE_CHANGE_TYPES.character, {
+      highlightedIndex: nextIndex,
+    });
+
+    if (this.refList[nextIndex]) {
+      scrollItemIntoView(
+        this.refList[nextIndex].current,
+        // $FlowFixMe
+        rootRef.current,
+        nextIndex === 0,
+        nextIndex === list.length - 1,
+      );
     }
   };
 
@@ -197,6 +280,7 @@ export default class MenuStatefulContainer extends React.Component<
         }
       }
     }
+
     if (this.refList[nextIndex]) {
       scrollItemIntoView(
         this.refList[nextIndex].current,
@@ -281,7 +365,6 @@ export default class MenuStatefulContainer extends React.Component<
             onClick: this.handleItemClick.bind(this, index, item),
             onMouseEnter: this.handleMouseEnter.bind(this, index),
           }),
-      // $FlowFixMe due to flow-check-build failure on 0.111.3
       ...requiredItemProps,
     };
   };
@@ -289,11 +372,12 @@ export default class MenuStatefulContainer extends React.Component<
   focusMenu = (event: FocusEvent | MouseEvent | KeyboardEvent) => {
     const rootRef = this.props.rootRef ? this.props.rootRef : this.rootRef;
 
-    if (this.state.isFocused) {
-      return;
-    }
-    // $FlowFixMe
-    if (rootRef.current && rootRef.current.contains(event.target)) {
+    if (
+      !this.state.isFocused &&
+      rootRef.current &&
+      // $FlowFixMe
+      rootRef.current.contains(event.target)
+    ) {
       if (this.state.highlightedIndex < 0) {
         this.internalSetState(STATE_CHANGE_TYPES.focus, {
           isFocused: true,
@@ -322,6 +406,7 @@ export default class MenuStatefulContainer extends React.Component<
   render() {
     // omit the stateful-container's props and don't pass it down
     // to the children (stateless menu)
+
     const {
       initialState,
       stateReducer,
@@ -333,6 +418,7 @@ export default class MenuStatefulContainer extends React.Component<
       getChildMenu,
       ...restProps
     } = this.props;
+
     return this.props.children(
       ({
         ...restProps,
@@ -342,6 +428,9 @@ export default class MenuStatefulContainer extends React.Component<
         handleMouseLeave: this.handleMouseLeave,
         highlightedIndex: this.state.highlightedIndex,
         isFocused: this.state.isFocused,
+        handleKeyDown: this.props.keyboardControlNode.current
+          ? event => {}
+          : this.onKeyDown,
         focusMenu: this.focusMenu,
         unfocusMenu: this.unfocusMenu,
       }: RenderPropsT),

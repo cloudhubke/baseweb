@@ -9,6 +9,7 @@ import Example from '../../components/example';
 import API from '../../components/api';
 import Layout from '../../components/layout';
 import Exports from '../../components/exports';
+import TableGuideNotification from '../../components/table-guide-notification';
 
 import * as TableGridExports from 'baseui/table-grid';
 
@@ -19,6 +20,8 @@ import Sortable from 'examples/table-grid/sortable.js';
 import CellNavigation from 'examples/table-grid/cell-navigation.js';
 
 export default Layout;
+
+<TableGuideNotification />
 
 # Table-Grid
 
@@ -49,7 +52,7 @@ with [flex-box](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Bo
 
 ## Accessibility
 
-Tables should be navigatable by keyboard. The example below includes a useful react hook to apply arrow
+Tables should be navigable by keyboard. The example below includes a useful react hook to apply arrow
 event handlers to cells.
 
 <Example

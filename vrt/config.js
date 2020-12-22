@@ -258,6 +258,9 @@ const config = {
   'nav-long': {
     skip: true,
   },
+  'popover-reposition': {
+    skip: true,
+  },
   'phone-input-custom-flags': {
     interactions: [
       {
@@ -272,6 +275,21 @@ const config = {
             visible: true,
           });
           await page.type(selectInputSelector, 'zzz');
+        },
+      },
+    ],
+  },
+  'pin-code-mask': {
+    interactions: [
+      {
+        name: 'numberInput',
+        behavior: async page => {
+          const inputSelector = 'input';
+          await page.focus(inputSelector);
+          await page.keyboard.press('1');
+          await page.keyboard.press('2');
+          await page.keyboard.press('3');
+          await page.keyboard.press('4');
         },
       },
     ],
@@ -398,6 +416,58 @@ const config = {
       },
     ],
   },
+  'spinner-determinate-animated': {
+    skip: true,
+  },
+  'tabs-motion-conditional': {
+    skip: true,
+  },
+  'tabs-motion-focus': {
+    skip: true,
+  },
+  'tabs-motion-manual': {
+    skip: true,
+  },
+  'tabs-motion-stateful': {
+    skip: true,
+  },
+  'tabs-motion-renderAll': {
+    skip: true,
+  },
+  'tabs-motion-vertical-pageScroll': {
+    interactions: [
+      {
+        name: 'ArrowDown',
+        behavior: async page => {
+          const tab = await page.$('[role=tab]');
+          await tab.focus();
+          await page.keyboard.press('ArrowDown');
+        },
+      },
+    ],
+  },
+  'tabs-motion': {
+    interactions: [
+      {
+        name: 'focus',
+        behavior: async page => {
+          const tab = await page.$('[role=tab]');
+          await tab.focus();
+        },
+      },
+    ],
+  },
+  textarea: {
+    interactions: [
+      {
+        name: 'focus',
+        behavior: async page => {
+          const element = await page.$('textarea');
+          await element.focus();
+        },
+      },
+    ],
+  },
   'toaster-focus': {
     skip: true,
   },
@@ -423,15 +493,15 @@ const config = {
         behavior: async page => {
           const selectSelector = '[data-baseweb="select"] input';
           const dropdownSelector = '[role="listbox"]';
-          const dropdownOptionSeletor = '[role="option"]';
-          const firstOption = `${dropdownSelector} ${dropdownOptionSeletor}:nth-child(1)`;
+          const dropdownOptionSelector = '[role="option"]';
+          const firstOption = `${dropdownSelector} ${dropdownOptionSelector}:nth-child(1)`;
           await page.waitForSelector(selectSelector);
           await page.click(selectSelector);
           await page.waitForSelector(dropdownSelector, {
             visible: true,
           });
           await page.click(firstOption);
-          await page.waitFor(dropdownSelector, {
+          await page.waitForSelector(dropdownSelector, {
             hidden: true,
           });
         },

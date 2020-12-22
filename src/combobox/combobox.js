@@ -34,9 +34,13 @@ function Combobox<OptionT>(props: PropsT<OptionT>) {
     autocomplete = true,
     disabled = false,
     error = false,
+    onBlur,
     onChange,
+    onFocus,
+    onSubmit,
     mapOptionToNode,
     mapOptionToString,
+    id,
     name,
     options,
     overrides = {},
@@ -132,9 +136,14 @@ function Combobox<OptionT>(props: PropsT<OptionT>) {
     if (event.keyCode === ENTER) {
       let clickedOption = options[selectionIndex];
       if (clickedOption) {
+        event.preventDefault();
         setIsOpen(false);
         setSelectionIndex(-1);
         onChange(mapOptionToString(clickedOption), clickedOption);
+      } else {
+        if (onSubmit) {
+          onSubmit({closeListbox: () => setIsOpen(false), value});
+        }
       }
     }
     if (event.keyCode === ESCAPE) {
@@ -146,6 +155,13 @@ function Combobox<OptionT>(props: PropsT<OptionT>) {
       setSelectionIndex(-1);
       setTempValue(value);
     }
+  }
+
+  function handleFocus(event) {
+    if (!isOpen && options.length) {
+      handleOpen();
+    }
+    if (onFocus) onFocus(event);
   }
 
   function handleBlur(event) {
@@ -160,10 +176,10 @@ function Combobox<OptionT>(props: PropsT<OptionT>) {
     ) {
       return;
     }
-
     setIsOpen(false);
     setSelectionIndex(-1);
     setTempValue(value);
+    if (onBlur) onBlur(event);
   }
 
   function handleInputChange(event) {
@@ -268,7 +284,7 @@ function Combobox<OptionT>(props: PropsT<OptionT>) {
           aria-expanded={isOpen}
           aria-haspopup="listbox"
           aria-owns={listboxId}
-          // a11y linter implements the older 1.0 spec, supressing to use updated 1.1
+          // a11y linter implements the older 1.0 spec, suppressing to use updated 1.1
           // https://github.com/A11yance/aria-query/issues/43
           // https://github.com/evcohen/eslint-plugin-jsx-a11y/issues/442
           // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
@@ -285,8 +301,10 @@ function Combobox<OptionT>(props: PropsT<OptionT>) {
             disabled={disabled}
             error={error}
             name={name}
+            id={id}
             onBlur={handleBlur}
             onChange={handleInputChange}
+            onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             overrides={inputOverrides}
             positive={positive}

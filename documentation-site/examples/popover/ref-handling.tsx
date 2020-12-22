@@ -23,7 +23,7 @@ const CheckboxWithRef = React.forwardRef((props: any, ref) => {
   );
 });
 
-export default () => {
+export default function Example() {
   const [css] = useStyletron();
   return (
     <div
@@ -44,7 +44,7 @@ export default () => {
       >
         <CheckboxWithRef>
           Created a wrapper component that renders Checkbox and
-          passes popover's anchor props to the Chackbox's Root
+          passes popover's anchor props to the Checkbox's Root
           element.
         </CheckboxWithRef>
       </StatefulPopover>
@@ -67,4 +67,4 @@ export default () => {
       </StatefulPopover>
     </div>
   );
-};
+}

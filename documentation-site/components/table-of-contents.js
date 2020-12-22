@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 
 import * as React from 'react';
 import {useStyletron} from 'baseui';
+import slugify from '../helpers/slugify';
 
 function getPadding(componentType) {
   const multiplier = Number(componentType.replace('h', ''));
@@ -24,6 +25,7 @@ const TableOfContents = props => {
     content.forEach &&
     content.forEach(element => {
       if (
+        element.props &&
         element.props.name &&
         element.props.name.startsWith('h') &&
         element.props.children &&
@@ -31,27 +33,23 @@ const TableOfContents = props => {
       ) {
         TOC.push({
           name: element.props.children,
-          anchor: `#${element.props.children
-            .toLowerCase()
-            .replace(/\s+/g, '-')}`,
+          anchor: `#${slugify(element.props.children)}`,
           component: element.props.name,
         });
       }
 
-      if (element.props.title) {
+      if (element.props && element.props.title) {
         TOC.push({
           name: element.props.title,
-          anchor: `#${element.props.title.toLowerCase().replace(/\s+/g, '-')}`,
+          anchor: `#${slugify(element.props.title)}`,
           component: 'h3',
         });
       }
 
-      if (element.props.api && element.props.heading) {
+      if (element.props && element.props.api && element.props.heading) {
         TOC.push({
           name: element.props.heading,
-          anchor: `#${element.props.heading
-            .toLowerCase()
-            .replace(/\s+/g, '-')}`,
+          anchor: `#${slugify(element.props.heading)}`,
           component: 'h3',
         });
       }

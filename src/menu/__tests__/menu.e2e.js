@@ -74,6 +74,24 @@ describe('menu-child', () => {
     expect(text).toBe('New Window');
   });
 
+  it('keyboard character input change highlighted item through type-ahead', async () => {
+    await mount(page, 'menu-child');
+    await hoverItem(page, 0, 0);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('a');
+    const text = await findHighlightedLabel(page);
+    expect(text).toBe('Add Folder to Workspace...');
+  });
+
+  it('type-ahead can have fulltext match', async () => {
+    await mount(page, 'menu-child');
+    await hoverItem(page, 0, 0);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('b');
+    const text = await findHighlightedLabel(page);
+    expect(text).toBe('Toggle Breakpoint');
+  });
+
   it('unhighlights item on mouse leave', async () => {
     await mount(page, 'menu-child');
     await hoverItem(page, 0, 0);
@@ -122,22 +140,22 @@ describe('menu-child', () => {
   it('opens child menu on hover', async () => {
     await mount(page, 'menu-child');
     await hoverItem(page, 0, 5);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(childSelector);
   });
 
   it('allows child menu to release focus and closes menu when different menu item selected', async () => {
     await mount(page, 'menu-child');
     await hoverItem(page, 0, 5);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(childSelector);
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('ArrowDown');
-    await page.waitFor(childSelector, {hidden: true});
+    await page.waitForSelector(childSelector, {hidden: true});
   });
 
   it('highlights child menu item on hover', async () => {
     await mount(page, 'menu-child');
     await hoverItem(page, 0, 5);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(childSelector);
 
     await hoverItem(page, 1, 5);
     const text = await findHighlightedLabel(page);
@@ -146,26 +164,37 @@ describe('menu-child', () => {
 
   it('renders content even when hidden: with renderAll prop', async () => {
     await mount(page, 'menu-child-render-all');
-    await page.waitFor(parentSelector);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(parentSelector);
+    await page.waitForSelector(childSelector);
     await hoverItem(page, 0, 0);
 
     const parent = await page.$(parentSelector);
     const activeElement = await findActiveElement(page);
     const isEqual = await compareElements(page, parent, activeElement);
     expect(isEqual).toBe(true);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(childSelector);
   });
 
   it('child menu clicks do not close if inside popover content', async () => {
     await mount(page, 'menu-child-in-popover');
     await page.click('button');
-    await page.waitFor(parentSelector);
+    await page.waitForSelector(parentSelector);
     await page.mouse.move(150, 159);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(childSelector);
     await page.mouse.click(450, 159);
-    await page.waitFor(childSelector);
+    await page.waitForSelector(childSelector);
     await page.click('button');
-    await page.waitFor(childSelector, {hidden: true});
+    await page.waitForSelector(childSelector, {hidden: true});
+  });
+
+  it('keyboard navigation works when ancestor stopPropagations', async () => {
+    await mount(page, 'menu-propagation');
+    await hoverItem(page, 0, 0);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowUp');
+
+    const text = await findHighlightedLabel(page);
+    expect(text).toBe('Item Two');
   });
 });

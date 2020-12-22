@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 import * as React from 'react';
 
+import {Tag, KIND as TAG_KIND} from '../../tag/index.js';
+
 import CategoricalColumn from '../column-categorical.js';
+import CustomColumn from '../column-custom.js';
 import StringColumn from '../column-string.js';
-import {Unstable_StatefulDataTable} from '../stateful-data-table.js';
+import {StatefulDataTable} from '../stateful-data-table.js';
 
 import AnimalData from './animal-data.js';
 
@@ -33,10 +36,33 @@ const columns = [
     title: 'Kingdom',
     mapDataToValue: (data: RowDataT) => data.Kingdom,
   }),
-  CategoricalColumn({
+  CustomColumn({
     title: 'Phylum',
     minWidth: 90,
     mapDataToValue: (data: RowDataT) => data.Phylum,
+    textQueryFilter: function(textQuery, data) {
+      return data.toLowerCase().includes(textQuery.toLowerCase());
+    },
+    renderCell: function PhylumnCell(props) {
+      return (
+        <Tag
+          closeable={false}
+          overrides={{
+            Root: {
+              style: {
+                marginTop: 0,
+                marginRight: 0,
+                marginBottom: 0,
+                marginLeft: 0,
+              },
+            },
+          }}
+          kind={TAG_KIND.accent}
+        >
+          {props.value}
+        </Tag>
+      );
+    },
   }),
   CategoricalColumn({
     title: 'Class',
@@ -63,7 +89,7 @@ const rows = AnimalData.map(row => {
 export default function Scenario() {
   return (
     <div style={{height: '600px', width: '700px'}}>
-      <Unstable_StatefulDataTable columns={columns} rows={rows} />
+      <StatefulDataTable columns={columns} rows={rows} />
     </div>
   );
 }

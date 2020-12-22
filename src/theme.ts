@@ -1,16 +1,17 @@
-interface Breakpoints {
+export interface Breakpoints {
   small: number;
   medium: number;
   large: number;
 }
 
-interface MediaQuery {
+export interface MediaQuery {
   small: string;
   medium: string;
   large: string;
 }
 
-type Responsive<T> = T | T[];
+export type Responsive<T> = T | T[];
+
 export type CSSLengthUnitT =
   | 'cm'
   | 'mm'
@@ -29,7 +30,8 @@ export type CSSLengthUnitT =
   | 'vmin'
   | 'vmax'
   | '%';
-interface Grid {
+
+export interface Grid {
   columns: Responsive<number>;
   gutters: Responsive<number>;
   margins: Responsive<number>;
@@ -38,7 +40,7 @@ interface Grid {
   unit: CSSLengthUnitT;
 }
 
-interface Colors {
+export interface Colors {
   // Primary Palette
   primaryA: string;
   primaryB: string;
@@ -297,6 +299,13 @@ interface Colors {
   progressStepsActiveFill: string;
   progressStepsIconActiveFill: string;
 
+  // Toggle
+  toggleFill: string;
+  toggleFillChecked: string;
+  toggleFillDisabled: string;
+  toggleTrackFill: string;
+  toggleTrackFillDisabled: string;
+
   // Ticks
   tickFill: string;
   tickFillHover: string;
@@ -343,10 +352,16 @@ interface Colors {
   // Input
   inputBorder: string;
   inputFill: string;
-  inputFillActive: string;
   inputFillError: string;
   inputFillDisabled: string;
+  inputFillActive: string;
+  inputFillPositive: string;
   inputTextDisabled: string;
+  inputBorderError: string;
+  inputBorderPositive: string;
+  inputEnhancerFill: string;
+  inputEnhancerFillDisabled: string;
+  inputEnhancerTextDisabled: string;
   inputPlaceholder: string;
   inputPlaceholderDisabled: string;
 
@@ -545,6 +560,7 @@ interface Colors {
   // Table
   tableHeadBackgroundColor: string;
   tableBackground: string;
+  tableStripedBackground: string;
   tableFilter: string;
   tableFilterHeading: string;
   tableFilterBackground: string;
@@ -571,7 +587,7 @@ interface Colors {
   /* ---- End of Component Specific Colors ---- */
 }
 
-interface Font {
+export interface Font {
   fontFamily: string;
   fontWeight:
     | '-moz-initial'
@@ -588,7 +604,7 @@ interface Font {
   lineHeight: string | number;
 }
 
-interface Typography {
+export interface Typography {
   font100: Font;
   font150: Font;
   font200: Font;
@@ -627,7 +643,7 @@ interface Typography {
   DisplayLarge: Font;
 }
 
-interface Sizing {
+export interface Sizing {
   scale0: string;
   scale100: string;
   scale200: string;
@@ -636,10 +652,13 @@ interface Sizing {
   scale500: string;
   scale550: string;
   scale600: string;
+  scale650: string;
   scale700: string;
   scale750: string;
   scale800: string;
+  scale850: string;
   scale900: string;
+  scale950: string;
   scale1000: string;
   scale1200: string;
   scale1400: string;
@@ -649,7 +668,7 @@ interface Sizing {
   scale4800: string;
 }
 
-interface Lighting {
+export interface Lighting {
   shadow400: string;
   shadow500: string;
   shadow600: string;
@@ -663,7 +682,7 @@ interface Lighting {
   overlay600: string;
 }
 
-interface Animation {
+export interface Animation {
   timing100: string;
   timing200: string;
   timing300: string;
@@ -689,7 +708,7 @@ export interface Border {
   borderWidth: string;
 }
 
-interface Borders {
+export interface Borders {
   border100: Border;
   border200: Border;
   border300: Border;
@@ -707,7 +726,7 @@ interface Borders {
   surfaceBorderRadius: string;
 }
 
-interface ZIndex {
+export interface ZIndex {
   modal: number;
 }
 

@@ -102,13 +102,15 @@ export type BasePopoverPropsT = {
   /** Renders all popover content for SEO purposes regardless of popover isOpen state */
   renderAll?: boolean,
   /** If true, focus will shift back to the original element that triggered the popover
-   * Becareful with elements that open the popover on focus (e.g. input) this will cause the popover to reopen on close!
+   * Be careful with elements that open the popover on focus (e.g. input) this will cause the popover to reopen on close!
    */
   returnFocus?: boolean,
   /** Whether or not to show the arrow pointing from the popover to the trigger. */
   showArrow?: boolean,
   /** Whether to toggle the popover when trigger is clicked or hovered. */
   triggerType: TriggerTypeT,
+  /** Margin of the popover */
+  popoverMargin?: number,
 };
 
 // Props for stateless render logic
@@ -188,6 +190,7 @@ export type BodyStylePropsArgT = {
   $popoverOffset: OffsetT,
   $placement: TetherPlacementT,
   $showArrow: boolean,
+  $popoverMargin: number,
 };
 
 export type InnerStylePropsArgT = {};

@@ -6,102 +6,150 @@ LICENSE file in the root directory of this source tree.
 */
 // @flow
 
-import React from 'react';
+import React, {useState} from 'react';
+import {isAfter, isBefore} from 'date-fns';
 
-import {Block} from '../../block/index.js';
+import {useStyletron} from '../../styles/index.js';
 import {FormControl} from '../../form-control/index.js';
 import ArrowRight from '../../icon/arrow-right.js';
-import {Datepicker, TimePicker, formatDate} from '../index.js';
+import {Datepicker, TimePicker} from '../index.js';
 
 const START_DATE = new Date(2019, 3, 1, 12, 0, 0);
 const END_DATE = new Date(2019, 3, 10, 16, 0, 0);
 
-function formatDateAtIndex(dates: ?Date | ?Array<Date>, index: number) {
-  if (!dates || !Array.isArray(dates)) return '';
-  const date = dates[index];
-  if (!date) return '';
-  return formatDate(date, 'yyyy/MM/dd');
+function printDate(dt) {
+  if (!dt) return 'undefined';
+  return dt.getFullYear() + '/' + (dt.getMonth() + 1) + '/' + dt.getDate();
 }
 
-// eslint-disable-next-line flowtype/no-weak-types
-class Controlled extends React.Component<any, any> {
-  state = {date: [START_DATE, END_DATE]};
+function printTime(dt) {
+  if (!dt) return 'undefined';
+  return dt.toLocaleTimeString();
+}
 
-  render() {
-    return (
-      <>
-        <Block display="flex" alignItems="center">
-          <Block width="120px" marginRight="scale300">
+export default function Controlled() {
+  const [css, theme] = useStyletron();
+  const [dates, setDates] = useState<Array<Date>>([START_DATE, END_DATE]);
+
+  const inputGap = theme.sizing.scale300;
+
+  return (
+    <div>
+      <div
+        className={css({
+          [theme.mediaQuery.medium]: {
+            display: 'flex',
+            alignItems: 'center',
+          },
+        })}
+      >
+        <div className={css({display: 'flex'})}>
+          <div
+            id="start-date"
+            className={css({width: '120px', marginRight: inputGap})}
+          >
             <FormControl label="Start Date" caption="YYYY/MM/DD">
               <Datepicker
-                value={this.state.date}
-                onChange={({date}) => this.setState({date})}
-                formatDisplayValue={date => formatDateAtIndex(date, 0)}
+                value={dates}
+                // typecast to any because if datepicker is range, value is always array type
+                // eslint-disable-next-line flowtype/no-weak-types
+                onChange={({date}) => setDates((date: any))}
                 timeSelectStart
                 range
+                placeholder="Start Date"
+                displayValueAtRangeIndex={0}
+                mask="9999/99/99"
+                overrides={{
+                  TimeSelectContainer: {
+                    props: {id: 'time-select-start'},
+                  },
+                }}
               />
             </FormControl>
-          </Block>
+          </div>
 
-          <Block width="120px" marginRight="scale300">
+          <div
+            id="start-time"
+            className={css({width: '120px', marginRight: inputGap})}
+          >
             <FormControl label="Start Time" caption="HH:MM">
               <TimePicker
-                value={this.state.date[0]}
+                value={dates[0]}
                 onChange={time => {
-                  this.setState({date: [time, this.state.date[1]]});
+                  if (time) {
+                    if (isAfter(time, dates[1])) {
+                      setDates([time, time]);
+                    } else {
+                      setDates([time, dates[1]]);
+                    }
+                  }
                 }}
               />
             </FormControl>
-          </Block>
+          </div>
+        </div>
 
-          <Block marginRight="scale300">
-            <ArrowRight size={24} />
-          </Block>
+        <div
+          className={css({
+            display: 'none',
+            marginRight: inputGap,
+            [theme.mediaQuery.medium]: {
+              display: 'block',
+            },
+          })}
+        >
+          <ArrowRight size={24} />
+        </div>
 
-          <Block width="120px" marginRight="scale300">
+        <div className={css({display: 'flex'})}>
+          <div
+            id="end-date"
+            className={css({width: '120px', marginRight: inputGap})}
+          >
             <FormControl label="End Date" caption="YYYY/MM/DD">
               <Datepicker
-                value={this.state.date}
-                onChange={({date}) => this.setState({date})}
-                formatDisplayValue={date => formatDateAtIndex(date, 1)}
-                overrides={{
-                  TimeSelectFormControl: {props: {label: 'End time'}},
-                }}
+                value={dates}
+                // typecast to any because if datepicker is range, value is always array type
+                // eslint-disable-next-line flowtype/no-weak-types
+                onChange={({date}) => setDates((date: any))}
                 timeSelectEnd
                 range
+                placeholder="End Date"
+                displayValueAtRangeIndex={1}
+                mask="9999/99/99"
               />
             </FormControl>
-          </Block>
+          </div>
 
-          <Block width="120px">
+          <div id="end-time" className={css({width: '120px'})}>
             <FormControl label="End Time" caption="HH:MM">
               <TimePicker
-                value={this.state.date[1]}
+                value={dates[1]}
                 onChange={time => {
-                  this.setState({date: [this.state.date[0], time]});
+                  if (time) {
+                    if (isBefore(time, dates[0])) {
+                      setDates([time, time]);
+                    } else {
+                      setDates([dates[0], time]);
+                    }
+                  }
                 }}
               />
             </FormControl>
-          </Block>
-        </Block>
+          </div>
+        </div>
+      </div>
 
-        <button
-          onClick={() =>
-            this.setState({date: [null, null], startTime: null, endTime: null})
-          }
-        >
-          set null
-        </button>
-        <button
-          onClick={() =>
-            this.setState({date: [], startTime: undefined, endTime: undefined})
-          }
-        >
-          set undefined
-        </button>
-      </>
-    );
-  }
+      <button id="set-undefined" onClick={() => setDates([])}>
+        set undefined
+      </button>
+
+      <div>
+        <p id="display-start-date">{printDate(dates[0])}</p>
+        <p id="display-start-time">{printTime(dates[0])}</p>
+        <p id="display-end-date">{printDate(dates[1])}</p>
+        <p id="display-end-time">{printTime(dates[1])}</p>
+      </div>
+    </div>
+  );
 }
-
-export default Controlled;

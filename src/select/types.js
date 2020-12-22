@@ -44,6 +44,7 @@ export type OverridesT = {
   ValueContainer?: OverrideT,
   SingleValue?: OverrideT,
   MultiValue?: OverrideT,
+  Tag?: OverrideT,
   InputContainer?: OverrideT,
   Input?: OverrideT,
   IconsContainer?: OverrideT,
@@ -80,6 +81,8 @@ export type PropsT = {
   autoFocus: boolean,
   /** Defines if options can be removed by pressing backspace. If you have customized labels, it will remove the option entirely, otherwise, it starts removing characters from the end of the string. */
   backspaceRemoves: boolean,
+  /** By default, backspace will only remove the last character of the input value. If true, the input value will be cleared. */
+  backspaceClearsInputValue?: boolean,
   /** Defines if the select value can be cleared. If true a clear icon is rendered when a value is set. */
   clearable: boolean,
   /** Defines if the menu closes after a selection if made. */
@@ -241,6 +244,7 @@ export type DropdownPropsT = {
   value: ValueT,
   valueKey: string,
   width: ?number,
+  keyboardControlNode?: React.ElementRef<*>,
 };
 
 export type AutosizeInputOverridesT = {

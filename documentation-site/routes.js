@@ -43,6 +43,10 @@ const routes = [
         itemId: '/guides/theming',
       },
       {
+        title: 'Styling',
+        itemId: '/guides/styling',
+      },
+      {
         title: 'Overrides',
         itemId: '/guides/understanding-overrides',
       },
@@ -176,8 +180,12 @@ const routes = [
             itemId: '/components/side-nav',
           },
           {
-            title: 'Tab',
+            title: 'Tabs',
             itemId: '/components/tabs',
+          },
+          {
+            title: 'Tabs (Motion)',
+            itemId: '/components/tabs-motion',
           },
         ],
       },
@@ -231,19 +239,19 @@ const routes = [
         subNav: [
           {
             title: 'Table',
-            itemId: '/components/table',
+            itemId: '/components/table-semantic',
           },
           {
             title: 'Data Table',
-            itemId: '/components/unstable-data-table',
+            itemId: '/components/data-table',
           },
           {
             title: 'Grid Table',
             itemId: '/components/table-grid',
           },
           {
-            title: 'Semantic Table',
-            itemId: '/components/table-semantic',
+            title: 'Flex Table',
+            itemId: '/components/table',
           },
         ],
       },
@@ -261,6 +269,14 @@ const routes = [
           {
             title: 'Progress Steps',
             itemId: '/components/progress-steps',
+          },
+          {
+            title: 'Skeleton',
+            itemId: '/components/skeleton',
+          },
+          {
+            title: 'Snackbar',
+            itemId: '/components/snackbar',
           },
           {
             title: 'Spinner',

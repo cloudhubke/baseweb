@@ -44,7 +44,7 @@ describe('numerical column', () => {
     const column = NumericalColumn({title: 'column', mapDataToValue: () => 0});
     const Cell = column.renderCell;
 
-    const {container} = render(<Cell value={1999.888} />);
+    const {container} = render(<Cell value={1999.888} x={0} y={0} />);
     const cell = container.querySelector('div');
     expect(cell.textContent).toBe('2000');
   });
@@ -58,7 +58,7 @@ describe('numerical column', () => {
     });
     const Cell = column.renderCell;
 
-    const {container} = render(<Cell value={value} />);
+    const {container} = render(<Cell value={value} x={0} y={0} />);
     const cell = container.querySelector('div');
     expect(cell.textContent).toBe('$1999.89');
   });
@@ -72,7 +72,7 @@ describe('numerical column', () => {
     });
     const Cell = column.renderCell;
 
-    const {container} = render(<Cell value={value} />);
+    const {container} = render(<Cell value={value} x={0} y={0} />);
     const cell = container.querySelector('div');
     expect(cell.textContent).toBe('($1999.89)');
   });
@@ -86,7 +86,7 @@ describe('numerical column', () => {
     });
     const Cell = column.renderCell;
 
-    const {container} = render(<Cell value={value} />);
+    const {container} = render(<Cell value={value} x={0} y={0} />);
     const cell = container.querySelector('div');
     expect(cell.textContent).toBe('1999.89%');
   });
@@ -100,7 +100,7 @@ describe('numerical column', () => {
     });
     const Cell = column.renderCell;
 
-    const {container} = render(<Cell value={value} />);
+    const {container} = render(<Cell value={value} x={0} y={0} />);
     const cell = container.querySelector('div');
     expect(cell.textContent).toBe('EUR 1999.888');
   });
@@ -114,7 +114,7 @@ describe('numerical column', () => {
     });
     const Cell = column.renderCell;
 
-    const {container} = render(<Cell value={value} />);
+    const {container} = render(<Cell value={value} x={0} y={0} />);
     const cell = container.querySelector('div');
     expect(cell.textContent).toBe('1999.888');
   });
@@ -140,7 +140,7 @@ describe('numerical column', () => {
     expect(filterParams.comparisons[0].value).toBe(2);
     expect(filterParams.exclude).toBe(false);
     expect(filterParams.comparisons[0].operation).toBe('LT');
-    expect(filterParams.description).toBe('LT 2');
+    expect(filterParams.description).toBe('< 2');
   });
 
   it('hides operators if filter single value', () => {

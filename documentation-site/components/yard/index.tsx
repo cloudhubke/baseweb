@@ -25,6 +25,7 @@ import {getProvider, getThemeFromContext, TProviderValue} from './provider';
 import {customProps, TCustomPropFields} from './custom-props';
 import ThemeEditor from './theme-editor';
 import Overrides from './overrides';
+import OverridesDescription from './overrides-description';
 import Editor from './editor';
 import ActionButtons from './action-buttons';
 import Knobs from './knobs';
@@ -36,11 +37,13 @@ import {TYardProps} from './types';
 const Yard: React.FC<TYardProps> = ({
   componentName,
   placeholderHeight,
+  compilerStyles,
   scope,
   props,
   theme,
   imports,
   mapTokensToProps,
+  initialTab,
 }) => {
   const [css, baseTheme] = useStyletron();
   const componentTheme = getThemeFromContext(baseTheme, theme);
@@ -69,7 +72,10 @@ const Yard: React.FC<TYardProps> = ({
   const activeThemeValues = countThemeValues(params.providerValue);
 
   const showOverrides =
-    props.overrides.custom.names && props.overrides.custom.names.length > 0;
+    props.overrides &&
+    props.overrides.custom &&
+    props.overrides.custom.names &&
+    props.overrides.custom.names.length > 0;
   const showTheme = theme.length > 0;
 
   // Bail in IE11
@@ -91,6 +97,7 @@ const Yard: React.FC<TYardProps> = ({
     <Card>
       <Compiler
         {...params.compilerProps}
+        className={compilerStyles ? css(compilerStyles) : undefined}
         minHeight={placeholderHeight}
         placeholder={() => (
           <div
@@ -108,7 +115,7 @@ const Yard: React.FC<TYardProps> = ({
       />
       <Error msg={params.errorProps.msg} isPopup />
       {showOverrides || showTheme ? (
-        <YardTabs>
+        <YardTabs initialTab={initialTab}>
           <YardTab title={`Props${activeProps > 0 ? ` (${activeProps})` : ''}`}>
             <Knobs {...params.knobProps} />
           </YardTab>
@@ -118,6 +125,7 @@ const Yard: React.FC<TYardProps> = ({
                 activeOverrides > 0 ? ` (${activeOverrides})` : ''
               }`}
             >
+              <OverridesDescription componentName={componentName} />
               <Overrides
                 componentName={componentName}
                 componentConfig={props}

@@ -149,6 +149,7 @@ class Select extends React.Component<PropsT, SelectStateT> {
   componentWillUnmount() {
     if (__BROWSER__) {
       document.removeEventListener('touchstart', this.handleTouchOutside);
+      document.removeEventListener('click', this.handleClickOutside);
     }
     this.isMounted = false;
   }
@@ -289,10 +290,8 @@ class Select extends React.Component<PropsT, SelectStateT> {
       ) {
         return;
       }
-    } else {
-      if (containsNode(this.anchor.current, event.target)) {
-        return;
-      }
+    } else if (containsNode(this.anchor.current, event.target)) {
+      return;
     }
 
     if (this.props.onBlur) {
@@ -306,10 +305,6 @@ class Select extends React.Component<PropsT, SelectStateT> {
         isPseudoFocused: false,
         inputValue: this.props.onBlurResetsInput ? '' : this.state.inputValue,
       });
-    }
-
-    if (__BROWSER__) {
-      document.removeEventListener('click', this.handleClickOutside);
     }
   };
 
@@ -345,13 +340,6 @@ class Select extends React.Component<PropsT, SelectStateT> {
         if (!this.state.inputValue && this.props.backspaceRemoves) {
           event.preventDefault();
           this.backspaceValue();
-        }
-        break;
-      case 13: // enter
-        event.preventDefault();
-        event.stopPropagation();
-        if (!this.state.isOpen) {
-          this.setState({isOpen: true});
         }
         break;
       case 9: // tab
@@ -555,7 +543,10 @@ class Select extends React.Component<PropsT, SelectStateT> {
     const renderLabel = this.props.getValueLabel || this.getValueLabel;
     const labelForInput = renderLabel({option: item, index: valueLength - 1});
     // label might not be a string, it might be a Node of another kind.
-    if (typeof labelForInput === 'string') {
+    if (
+      !this.props.backspaceClearsInputValue &&
+      typeof labelForInput === 'string'
+    ) {
       const remainingInput = labelForInput.slice(0, -1);
       this.setState({
         inputValue: remainingInput,
@@ -627,7 +618,7 @@ class Select extends React.Component<PropsT, SelectStateT> {
       <LoadingIndicator
         size={16}
         overrides={{Svg: {style: getLoadingIconStyles}}}
-        $silenceV10DeprecationWarning
+        $silenceV11DeprecationWarning
         {...sharedProps}
         {...loadingIndicatorProps}
       />
@@ -656,7 +647,7 @@ class Select extends React.Component<PropsT, SelectStateT> {
             key={`value-${i}-${value[this.props.valueKey]}`}
             removeValue={() => this.removeValue(value)}
             disabled={disabled}
-            overrides={{MultiValue: overrides.MultiValue}}
+            overrides={{Tag: overrides.Tag, MultiValue: overrides.MultiValue}}
             {...sharedProps}
             $disabled={disabled}
           >
@@ -841,7 +832,7 @@ class Select extends React.Component<PropsT, SelectStateT> {
     const sharedProps = this.getSharedProps();
 
     return (
-      // TODO(v10): remove searchIconProps from SearchIconContainer
+      // TODO(v11): remove searchIconProps from SearchIconContainer
       <SearchIconContainer
         {...sharedProps}
         {...searchIconProps}
@@ -1001,6 +992,7 @@ class Select extends React.Component<PropsT, SelectStateT> {
             mountNode={this.props.mountNode}
             onEsc={() => this.closeMenu()}
             isOpen={isOpen}
+            popoverMargin={0}
             content={() => {
               const dropdownProps = {
                 error: this.props.error,
@@ -1027,6 +1019,7 @@ class Select extends React.Component<PropsT, SelectStateT> {
                 width: this.anchor.current
                   ? this.anchor.current.clientWidth
                   : null,
+                keyboardControlNode: this.anchor,
               };
 
               return (

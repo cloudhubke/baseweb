@@ -40,8 +40,6 @@ export default class FormControl extends React.Component<
     overrides: {},
     label: null,
     caption: null,
-    error: false,
-    positive: false,
     disabled: false,
   };
   state = {captionId: getBuiId()};
@@ -58,6 +56,7 @@ export default class FormControl extends React.Component<
       disabled,
       error,
       positive,
+      htmlFor,
       children,
     } = this.props;
 
@@ -90,7 +89,7 @@ export default class FormControl extends React.Component<
         {label && (
           <Label
             data-baseweb="form-control-label"
-            htmlFor={onlyChildProps.id}
+            htmlFor={htmlFor || onlyChildProps.id}
             {...sharedProps}
             {...getOverrideProps(LabelOverride)}
           >

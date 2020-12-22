@@ -20,6 +20,8 @@ import {
 import {STYLE_TYPE} from './constants.js';
 import {isFocusVisible} from '../utils/focusVisible.js';
 
+const stopPropagation = e => e.stopPropagation();
+
 class StatelessCheckbox extends React.Component<PropsT, StatelessStateT> {
   static defaultProps: DefaultPropsT = {
     overrides: {},
@@ -54,7 +56,7 @@ class StatelessCheckbox extends React.Component<PropsT, StatelessStateT> {
       inputRef.current.focus();
     }
 
-    // TODO(v10)
+    // TODO(v11)
     if (__DEV__) {
       if (this.props.checkmarkType === STYLE_TYPE.toggle) {
         console.warn(
@@ -131,6 +133,7 @@ class StatelessCheckbox extends React.Component<PropsT, StatelessStateT> {
       children,
       required,
       title,
+      ariaLabel,
     } = this.props;
 
     const {
@@ -176,7 +179,7 @@ class StatelessCheckbox extends React.Component<PropsT, StatelessStateT> {
       $value: value,
       $checkmarkType: checkmarkType,
     };
-    // TODO(v10) - add check for children (#2172)
+    // TODO(v11) - add check for children (#2172)
     const labelComp = (
       <Label
         $labelPlacement={labelPlacement}
@@ -226,6 +229,7 @@ class StatelessCheckbox extends React.Component<PropsT, StatelessStateT> {
           name={name}
           checked={checked}
           required={required}
+          aria-label={ariaLabel}
           aria-checked={isIndeterminate ? 'mixed' : checked}
           aria-describedby={this.props['aria-describedby']}
           aria-errormessage={this.props['aria-errormessage']}
@@ -234,6 +238,9 @@ class StatelessCheckbox extends React.Component<PropsT, StatelessStateT> {
           disabled={disabled}
           type={type}
           ref={inputRef}
+          // Prevent a second click event from firing when label is clicked.
+          // See https://github.com/uber/baseweb/issues/3847
+          onClick={stopPropagation}
           {...sharedProps}
           {...inputEvents}
           {...getOverrideProps(InputOverride)}

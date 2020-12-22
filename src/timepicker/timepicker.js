@@ -87,10 +87,19 @@ class TimePicker<T = Date> extends React.Component<
       const steps = this.buildSteps();
       this.setState({steps});
     }
+    if (prevProps.value && !this.props.value) {
+      this.setState({value: null});
+    }
   }
 
   onChange = (params: OnChangeParamsT) => {
     this.setState({value: params.value[0]});
+    if (params.value.length === 0) {
+      if (this.props.nullable) {
+        this.props.onChange && this.props.onChange(null);
+      }
+      return;
+    }
     const seconds: number =
       typeof params.value[0].id === 'string'
         ? parseInt(params.value[0].id, 10)

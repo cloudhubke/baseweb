@@ -3,6 +3,10 @@ import {Select, SIZE, TYPE} from 'baseui/select';
 import {PropTypes} from 'react-view';
 import {changeHandlers} from './common/common';
 import {TConfig} from '../types';
+import tagConfig from './tag';
+import popoverConfig from './popover';
+import spinnerConfig from './spinner';
+import iconConfig from './icon';
 
 const selectProps = require('!!extract-react-types-loader!../../../../src/select/select.js');
 
@@ -54,6 +58,14 @@ const SelectConfig: TConfig = {
       type: PropTypes.Boolean,
       defaultValue: true,
       description: 'Defines if options can be removed by pressing backspace.',
+    },
+    backspaceClearsInputValue: {
+      value: undefined,
+      type: PropTypes.Boolean,
+      defaultValue: false,
+      description:
+        'By default, backspace will only remove the last character of the input value. If true, the input value will be cleared.',
+      hidden: true,
     },
     clearable: {
       value: true,
@@ -158,7 +170,7 @@ const SelectConfig: TConfig = {
     valueKey: {
       value: undefined,
       type: PropTypes.String,
-      description: `/** Defines a key name for an option's unique identifier value.
+      description: `Defines a key name for an option's unique identifier value.
         The value of the 'valueKey' prop is used to identify what options are selected
         or removed from the selection, it also used for default filtering out the
         selected options from the dropdown list.`,
@@ -338,26 +350,26 @@ const SelectConfig: TConfig = {
       custom: {
         names: [
           'Root',
+          {...iconConfig, componentName: 'ClearIcon'},
           'ControlContainer',
-          'Placeholder',
-          'ValueContainer',
-          'SingleValue',
-          'MultiValue',
-          'InputContainer',
-          'Input',
-          'IconsContainer',
-          'SelectArrow',
-          'ClearIcon',
-          'LoadingIndicator',
-          'SearchIconContainer',
-          'SearchIcon',
-          'Popover',
-          'DropdownContainer',
           'Dropdown',
-          'DropdownOption',
+          'DropdownContainer',
           'DropdownListItem',
+          'DropdownOption',
+          'Input',
+          'InputContainer',
+          'IconsContainer',
+          {...spinnerConfig, componentName: 'LoadingIndicator'},
           'OptionContent',
+          'Placeholder',
+          {...popoverConfig, componentName: 'Popover'},
+          {...iconConfig, componentName: 'SearchIcon'},
+          'SearchIconContainer',
+          {...iconConfig, componentName: 'SelectArrow'},
+          'SingleValue',
           'StatefulMenu',
+          tagConfig,
+          'ValueContainer',
         ],
         sharedProps: {
           $clearable: 'clearable',

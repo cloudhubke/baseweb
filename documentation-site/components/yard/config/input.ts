@@ -85,6 +85,12 @@ export const inputProps = {
     description:
       'If true, adds a clear value icon button to the end of the input container.',
   },
+  clearOnEscape: {
+    value: true,
+    type: PropTypes.Boolean,
+    description:
+      'If true, clears the input when the Escape button is pressed with the input focused.',
+  },
   startEnhancer: {
     value: undefined,
     placeholder: '() => <span>$</span>',
@@ -177,14 +183,26 @@ export const inputProps = {
   },
   min: {
     value: undefined,
-    type: PropTypes.String,
+    type: PropTypes.Number,
     description: 'min value when used as input type=number',
     hidden: true,
   },
   max: {
     value: undefined,
-    type: PropTypes.String,
+    type: PropTypes.Number,
     description: 'max value when used as input type=number',
+    hidden: true,
+  },
+  step: {
+    value: undefined,
+    type: PropTypes.String,
+    description: 'step value when used as input type=number',
+    hidden: true,
+  },
+  maxLength: {
+    value: undefined,
+    type: PropTypes.Number,
+    description: 'max number of characters accepted in the input element',
     hidden: true,
   },
   ...pick(changeHandlers, [

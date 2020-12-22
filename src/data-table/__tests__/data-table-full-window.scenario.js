@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 import * as React from 'react';
 
 // import {
-//   Unstable_StatefulDataTable,
+//   StatefulDataTable,
 //   BooleanColumn,
 //   CategoricalColumn,
 //   NumericalColumn,
@@ -47,9 +47,9 @@ export default function Scenario() {
 
   return (
     <div style={{height: '100vh', width: '100vw'}}>
-      {/* <Unstable_StatefulDataTable columns={columns} rows={rows} /> */}
+      {/* <StatefulDataTable columns={columns} rows={rows} /> */}
       <p style={{backgroundColor: 'red', color: 'white'}}>
-        decommisioned due to flakey vrt. will revisit
+        decommissioned due to flaky vrt. will revisit
       </p>
     </div>
   );

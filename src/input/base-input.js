@@ -55,6 +55,7 @@ class BaseInput<T: EventTarget> extends React.Component<
     onFocus: () => {},
     onClear: () => {},
     clearable: false,
+    clearOnEscape: true,
     overrides: {},
     pattern: null,
     placeholder: '',
@@ -115,7 +116,11 @@ class BaseInput<T: EventTarget> extends React.Component<
   }
 
   onInputKeyDown = (e: KeyboardEvent) => {
-    if (this.props.clearable && e.key === 'Escape' && this.inputRef.current) {
+    if (
+      this.props.clearOnEscape &&
+      e.key === 'Escape' &&
+      this.inputRef.current
+    ) {
       this.clearValue();
       // prevent event from closing modal or doing something unexpected
       e.stopPropagation();
@@ -244,6 +249,12 @@ class BaseInput<T: EventTarget> extends React.Component<
     );
     const ariaLabel = 'Clear value';
     const sharedProps = getSharedProps(this.props, this.state);
+    const iconSize = {
+      [SIZE.mini]: '14px',
+      [SIZE.compact]: '20px',
+      [SIZE.default]: '26px',
+      [SIZE.large]: '32px',
+    }[this.props.size];
     return (
       <ClearIconContainer
         $alignTop={this.props.type === CUSTOM_INPUT_TYPE.textarea}
@@ -251,7 +262,7 @@ class BaseInput<T: EventTarget> extends React.Component<
         {...clearIconContainerProps}
       >
         <ClearIcon
-          size={16}
+          size={iconSize}
           tabIndex={0}
           title={ariaLabel}
           aria-label={ariaLabel}
@@ -323,6 +334,7 @@ class BaseInput<T: EventTarget> extends React.Component<
           disabled={this.props.disabled}
           id={this.props.id}
           inputMode={this.props.inputMode}
+          maxLength={this.props.maxLength}
           name={this.props.name}
           onBlur={this.onBlur}
           onChange={this.props.onChange}
@@ -337,6 +349,7 @@ class BaseInput<T: EventTarget> extends React.Component<
           value={this.props.value}
           min={this.props.min}
           max={this.props.max}
+          step={this.props.step}
           rows={
             this.props.type === CUSTOM_INPUT_TYPE.textarea
               ? this.props.rows
